@@ -6,7 +6,6 @@ app = Flask(__name__)
 
 
 @app.route('/')
-
 def landingPage():
 	print("landingPage() called")
 	return render_template('index.html')
@@ -17,6 +16,11 @@ def landingPage():
 # def findUsers():
 # 	if request.method == 'GET':
 # 		do_the_thing()
+
+
+@app.route('/thanks')
+def thanksPage():
+	return render_template('thanks.html')
 
 
 
