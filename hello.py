@@ -6,9 +6,8 @@ app = Flask(__name__)
 
 
 @app.route('/')
-@app.rounte('/index.html')
+@app.route('/index.html')
 def landingPage():
-	print("landingPage() called")
 	return render_template('index.html')
 
 
