@@ -26,8 +26,8 @@ def findUsers():
 	if request.method == 'GET':
 		print("why heloo there")
 
-		# Get the query string
-		q = request.query_string	# http://stackoverflow.com/q/11774265
+		# Get the query
+		q = str( request.args.get("to") )	# http://stackoverflow.com/q/11774265
 
 		print(q)
 
@@ -88,7 +88,7 @@ def findUsers():
 		]
 
 		# We "search" through the data
-		regex = re.escape( q['to'].value )
+		regex = re.escape( q )
 
 		for row in data:
 			# Looking for users that match our auto-complete search
