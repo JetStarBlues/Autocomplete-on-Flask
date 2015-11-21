@@ -11,11 +11,10 @@ def landingPage():
 	return render_template('index.html')
 
 
-# @app.route('/auto_python', methods=['GET', 'POST'])
-
-# def findUsers():
-# 	if request.method == 'GET':
-# 		do_the_thing()
+@app.route('/auto_python.cgi', methods=['GET', 'POST'])
+def findUsers():
+	if request.method == 'GET':
+		print("why heloo there")
 
 
 @app.route('/thanks.html')
