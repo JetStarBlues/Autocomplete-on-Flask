@@ -29,6 +29,8 @@ def findUsers():
 		# Get the query string
 		q = request.query_string	# http://stackoverflow.com/q/11774265
 
+		print(q)
+
 		# We will store our response HTML here
 		html = ''
 
