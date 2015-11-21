@@ -63,7 +63,7 @@
 <body>
 	<div id="container">
 		<div id="main"> &#x25B8; Thanks for the message! &#x25C2; </div>
-		<img id="image" src="{{ url_for('static', filename='OB/OB1.gif') }}"></img>
+		<img id="image" src="OB/OB1.gif"></img>
 		<div id="btw"> (*message not actually sent or stored) </div>
 		<div id="citHead">Sources &#x25BE; </div>
 		<div id="citations">		
@@ -97,10 +97,7 @@
 		//pick a random batman image
 		var rand = ( Math.floor ( Math.random() * 100 ) % 4 ) + 1;
 		var x = document.getElementById("image");
-		x.src = "#";
-		// x.src = "{{ url_for('static') }}" + "OB/OB" + rand + ".gif";
-		// var imgUrl = "OB/OB" + rand + ".gif";
-		// x.src = "{{ url_for('static', filename='{{ imgUrl }}') }}";
+		x.src = "OB/OB" + rand + ".gif";
 
 		window.onload = function(){
 			//show citations on click
