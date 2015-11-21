@@ -3,6 +3,7 @@ import re
 from flask import Flask
 from flask import render_template
 from flask import request
+from flask import Response
 
 app = Flask(__name__)
 
@@ -26,7 +27,10 @@ def findUsers():
 		print("why heloo there")
 
 		# Get the query string
-		q = request.query_string   # http://stackoverflow.com/q/11774265
+		q = request.query_string	# http://stackoverflow.com/q/11774265
+
+		# We will store our response HTML here
+		html = ''
 
 		# Our limited 'database' contains a few users
 		# with their username and full name
@@ -91,7 +95,7 @@ def findUsers():
 			if ( re.search(regex, row["user"], re.IGNORECASE) is not None or 
 			     re.search(regex, row["name"], re.IGNORECASE) is not None ):  
 				
-				return ( '<li id="' + row["user"] + '">' +
+				html =  '<li id="' + row["user"] + '">' +
 						'<img class="icon" src="' + "{{ url_for('static', filename='') }}" + 'icons/' + row["user"] + '.png"/>' +
 						'<div id="uDetails">' +
 						'<span id="username">' + row["user"] + '</span>' +
@@ -99,6 +103,8 @@ def findUsers():
 				    	'<span id="fullname">' + row["name"] + '</span>' +
 				    	'</div></li>' )
 
+		# And send the "response"
+		return Response(html, mimetype='text/html') 	# http://stackoverflow.com/a/11774026
 
 
 
