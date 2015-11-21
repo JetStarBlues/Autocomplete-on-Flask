@@ -97,7 +97,7 @@
 		//pick a random batman image
 		var rand = ( Math.floor ( Math.random() * 100 ) % 4 ) + 1;
 		var x = document.getElementById("image");
-		x.src = url_for('static') + "OB/OB" + rand + ".gif";
+		x.src = "{{ url_for('static') }}" + "OB/OB" + rand + ".gif";
 		// var imgUrl = "OB/OB" + rand + ".gif";
 		// x.src = "{{ url_for('static', filename=imgUrl) }}";
 
