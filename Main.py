@@ -1,11 +1,10 @@
 import os
 import re
 from flask import Flask
-from flask import render_template
-from flask import request
-from flask import Response
+from flask import render_template, request, Response
 
 app = Flask(__name__)
+
 
 # Home page
 @app.route('/')
@@ -28,8 +27,6 @@ def findUsers():
 
 		# Get the query
 		q = str( request.args.get("to") )	# http://stackoverflow.com/q/11774265
-
-		print(q)
 
 		# We will store our response HTML here
 		html = ''
@@ -104,14 +101,9 @@ def findUsers():
 						 '<span> : </span>' +
 				    	 '<span id="fullname">' + row["name"] + '</span>' +
 				    	 '</div></li>')
-
-		print(regex)
-		print(html)
 		
 		# And send the "response"
 		return Response(html, mimetype='text/html') 	# http://stackoverflow.com/a/11774026
-
-
 
 
 
