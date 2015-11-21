@@ -1,0 +1,7 @@
+My first Flask app
+
+http://flask.pocoo.org/docs/0.10/quickstart/
+
+As a solution to Heroku's severe allergy of CGI files. And as suggested in this StackOverflow answer,
+
+http://stackoverflow.com/a/13521028
