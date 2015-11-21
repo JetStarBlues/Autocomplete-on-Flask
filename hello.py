@@ -8,8 +8,8 @@ app = Flask(__name__)
 @app.route('/')
 
 def landingPage():
-	print("tlandingPage() called")
-	render_template('index.html')
+	print("landingPage() called")
+	render_template('flask_index.html')
 
 
 # @app.route('/auto_python', methods=['GET', 'POST'])
