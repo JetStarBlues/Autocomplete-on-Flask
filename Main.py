@@ -95,13 +95,14 @@ def findUsers():
 			if ( re.search(regex, row["user"], re.IGNORECASE) is not None or 
 			     re.search(regex, row["name"], re.IGNORECASE) is not None ):  
 				
-				html += '<li id="' + row["user"] + '">' +
+				h = '<li id="' + row["user"] + '">' +
 						'<img class="icon" src="' + "{{ url_for('static', filename='') }}" + 'icons/' + row["user"] + '.png"/>' +
 						'<div id="uDetails">' +
 						'<span id="username">' + row["user"] + '</span>' +
 						'<span> : </span>' +
 				    	'<span id="fullname">' + row["name"] + '</span>' +
 				    	'</div></li>'
+				html += h
 
 		# And send the "response"
 		return Response(html, mimetype='text/html') 	# http://stackoverflow.com/a/11774026
