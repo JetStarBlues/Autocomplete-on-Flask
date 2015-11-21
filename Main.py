@@ -1,7 +1,7 @@
 import os
 import re
 from flask import Flask
-from flask import render_template, request, Response
+from flask import render_template, request, Response, url_for
 
 app = Flask(__name__)
 
@@ -95,7 +95,7 @@ def findUsers():
 			     re.search(regex, row["name"], re.IGNORECASE) is not None ):  
 				
 				html += ('<li id="' + row["user"] + '">' +
-						 '<img class="icon" src="' + "{{ url_for('static', filename='') }}" + 'icons/' + row["user"] + '.png"/>' +
+						 '<img class="icon" src="' + url_for('static') + 'icons/' + row["user"] + '.png"/>' +
 						 '<div id="uDetails">' +
 						 '<span id="username">' + row["user"] + '</span>' +
 						 '<span> : </span>' +
