@@ -98,6 +98,7 @@
 		var rand = ( Math.floor ( Math.random() * 100 ) % 4 ) + 1;
 		var x = document.getElementById("image");
 		x.src = {{ url_for('static', filename='') }} + "OB/OB" + rand + ".gif";
+		console.log( typeof({{ url_for('static', filename='') }}) );
 
 		window.onload = function(){
 			//show citations on click
