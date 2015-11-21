@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from flask import render_template
+from flask import request
 
 app = Flask(__name__)
 
@@ -15,6 +16,8 @@ def landingPage():
 def findUsers():
 	if request.method == 'GET':
 		print("why heloo there")
+		query = request.args.get("to")
+		print("keyword received was ", query)
 
 
 @app.route('/thanks.html')
