@@ -18,7 +18,7 @@ def landingPage():
 # 		do_the_thing()
 
 
-@app.route('/thanks')
+@app.route('/thanks.html')
 def thanksPage():
 	return render_template('thanks.html')
 
