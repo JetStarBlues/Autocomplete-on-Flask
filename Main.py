@@ -103,8 +103,10 @@ def findUsers():
 				    	 '<span id="fullname">' + row["name"] + '</span>' +
 				    	 '</div></li>')
 
+		print(regex)
+		print(html)
 		# And send the "response"
-		return Response(html, mimetype='text/html') 	# http://stackoverflow.com/a/11774026
+		# return Response(html, mimetype='text/html') 	# http://stackoverflow.com/a/11774026
 
 
 
