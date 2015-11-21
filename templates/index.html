@@ -1,0 +1,634 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!-- <script type="text/javascript" src="delay.js"></script>
+		 <script type="text/javascript" src="script.js"></script>
+		 <script type="text/javascript" src="dom.js"></script> -->
+	<script type="text/javascript" src="ajaxRequest.js"></script>
+
+	<style>
+		body, textarea{
+			font-family: "Calibri";
+		}
+		#top{
+			width: 250px;
+		}
+		#mhead{
+			font-weight: bold;
+			font-style: italic;
+			margin-bottom: 10px;
+		}
+		.rest{
+			display:inline-block;
+			margin-bottom: 10px;
+		}
+		textarea{
+			width: 200px;
+			margin-bottom: 10px;
+		}
+		#submit{
+			background-color: #528B8B;
+			border:none;
+			box-shadow: 1px 2px 1px #2F4F4F;
+		}
+		#results{
+			margin-left: 25px;
+			margin-top: 5px;
+			/*display: none;*/
+		}
+		.icon{
+			width:auto; height:50px;
+			border: 1px solid #787878;
+			border-radius: 20px;
+		}
+		#uDetails{
+			display: inline-block;
+			padding-top: 15px; /*middle of icon*/
+			padding-left: 5px;
+			position: absolute;
+		}
+		#username{
+			font-weight: bold;
+		}
+		#qloading{
+			position:absolute;
+			margin-left: 3px;
+			margin-top: 3px;
+		}
+		ul{
+			list-style-type: none;
+			margin-top: 3px;
+			margin-left: -35px;
+		}
+		li{
+			width: 250px; 
+			height:50px; /*height of icon*/
+			margin-bottom: 6px;
+		}
+		img{
+			display: inline-block;
+		}
+		.cur{
+			background-color: #B0D8D8;
+			cursor: pointer;
+			padding-bottom: 3px; /*cool unintentional effect*/
+		}
+
+	</style>
+</head>
+
+<body>
+	<!--<form action="" method="POST" id="auto">-->
+	<form action="" method="GET" onsubmit="window.location.href = 'thanks.html'; return false;" id="auto">	
+		<div id="top">
+			<div id="mhead">Send Message</div>
+			<div class="light">
+				<label>From:</label>
+				<div class="rest from">
+					<img class="icon" src="icons/rockLee.png"/>
+					Rock Lee
+				</div>
+			</div>
+			<div class ="dark">
+				<div class="rest">
+					<label>To:</label>				
+					<input type="text" id="to" name="to" autocomplete="off"/>
+				</div>
+			</div>
+			<div class ="light"><textarea></textarea></div>
+			<div class = "submit"><input type="submit" id="submit" value="&raquo; Send"/></div>
+		</div>
+	</form>
+
+<script>
+
+// Utility functions
+	function id(name){
+		return document.getElementById(name);
+	}
+	function getStyle(elem, name){
+		if (elem.style[name])
+			return elem.style[name];
+		else
+			return null;
+	}
+	function hide(elem){
+		// Find out what its current display state is
+		var curDisplay = getStyle( elem, 'display' );
+
+		// Remember its display state for later
+		if ( curDisplay != 'none' )
+			elem._oldDisplay = curDisplay;
+
+		// Set the display to none (hiding the element)
+		elem.style.display = 'none';
+	}
+	function show(elem){
+		// Set the display property back to what it use to be, or use
+		// 'block', if no previous display had been saved
+		elem.style.display = elem._oldDisplay || 'block';	
+	}
+	function removeClass( elem, sClass ){
+		// Class to remove
+		sClass = " " + sClass + " "; //padding added to help with regex
+									 //Ex. say class is "menuBig menuBold menu"
+
+		// Find out its current class
+		var curClass = " " + elem.className + " ";  //padding added to help with regex
+
+
+		// Find index of class wish to remove
+		var idx = curClass.indexOf(sClass); //case sensitive
+
+		//If 'class' is present
+		if ( idx >= 0 ) {
+			//Remove it
+			var x = curClass.replace( sClass, " " );
+			curClass = x.trim(); //trim off extra spaces added
+			elem.className = curClass;
+			return;
+		}
+		else 
+			return;
+	}
+	function addClass( elem, sClass ){
+		// Find out its current class
+		var curClass = elem.className;
+
+		// Find index of class wish to remove
+		var idx = curClass.indexOf(sClass); //case sensitive
+
+		//If 'class' is present
+		if ( idx >= 0 ) 
+				return;
+		else{
+			// Add it and return
+			elem.className = curClass + " " + sClass;
+			return;
+		}
+	}
+
+// Global variables   JK------
+	var toTop; //bool to assign start position when kbd navigating
+	var curPos2 = 0; // Keep track of which user is currently serlected
+
+// Main
+	//domReady(function(){
+	window.onload = function(){
+
+		// Make sure that the results popup is closed to begin with
+		//hide( id("results") );
+		
+		// Keep track of which users have already been entered
+		var doneUsers = {};
+
+		// Keep track of which user is currently serlected
+		//var curPos;
+
+		// Create the loading image
+			var img = document.createElement("img");
+			img.src = "cog.gif";
+			img.id = "qloading";
+			img.style.display = "none"; //make sure hidden on window load
+
+			// And add it to the document, next to the input box
+			//id("to").parentNode.insertBefore( img, id("to") );
+			id("to").parentNode.insertBefore( img, id("to").nextSibling );  //stackoverflow.com/a/4793630
+
+		// Create the results area
+			var div = document.createElement("div");
+			div.id = "results";
+			div.innerHTML = "<div class='suggest'>Suggestions:</div><ul></ul>";
+			div.style.display = "none"; //make sure hidden on window load
+
+			// And add it in after the input box
+			id("to").parentNode.appendChild( div );
+
+		// Watch for input in the entry field
+		//id("to").onkeypress = function(e){
+		id("to").onkeydown = function(e){	//so that arrow keys recognized in Chrome		
+
+			//Get all of the users in the result set
+			var li = id("results").getElementsByTagName("li");
+			var last = li.length - 1;
+
+			// If the [TAB] or [ENTER] keys are pressed
+			if (e.keyCode == 9 || e.keyCode == 13){
+
+				// Reset the list of current users //???
+				//loadDone();                       //wtf???--------
+
+				// If the currently selected user is not in the list of selected
+				// users, add it on to the input
+				/*
+				if ( !doneUsers[ curPos.id ] )
+					addUser( curPos );
+				*/
+				
+				if ( !doneUsers[ curPos2 ] ){
+					//console.log("look " + li[curPos2].id);
+					addUser( li[curPos2] );					
+				}
+
+				// Stop the key from doing its normal action
+				e.preventDefault();
+				return false;
+			}
+
+			// If the [up] key is pressed
+			else if (e.keyCode == 38){
+				// Select the previous user, or the last user (if we're at the beginning)
+				//return updatePos( curPos.previousSibling || li[ li.length - 1 ] );
+
+				//JK-----
+				//Select the last user if new list has been generated
+				if(toTop){
+					curPos2 = last; 
+					toTop = false;
+				}
+				//Select the previous user, or the last user (if we're at the beginning)
+				else{
+					if(curPos2 > 0) //haven't reached top
+						curPos2--; 
+					else
+						curPos2 = last;
+				}
+				updatePos( li[curPos2] );
+
+				// console.log( "curPos2 is " + curPos2 );
+			}
+
+			// If the [down] key is pressed
+			else if (e.keyCode == 40){
+				// Select the next user, or the first user (if we're at the end)
+				//return updatePos( curPos.nextSibling || li[0] );
+
+				//JK-----
+				//Select the second user if new list has been generated
+				if(toTop){
+
+					curPos2 = 1; //start at second, as first chosen by default
+					toTop = false;
+				}
+				//Select the next user, or the first user (if we're at the end)
+				else{
+					if (curPos2 < last)//haven't yet reached bottom
+						curPos2++;  
+					else
+						curPos2 = 0;
+				}				
+				updatePos( li[curPos2] );
+
+				// console.log( "curPos2 is " + curPos2 );
+			}
+		}
+
+		// initialize the delayed input checks on our input		
+		delayedInput({
+			// We're attaching to the input text field
+			elem: id("to"),
+
+			// We're going to start searching after only 1 character of input
+			chars: 1,
+
+			// When the text field loses focus, close the results popup
+			focus: true,
+
+			// Handle when the result popup should be opened up
+			open: function(q,open){
+
+				//console.log( "I was called to grab a list");
+
+				// Get the last word out of the comma-seperated list of words
+				var w = trim( q.substr( q.lastIndexOf(',') + 1, q.length ) );
+
+				console.log( "This is what I'm looking up -> " + w + " <-");
+
+				// Make sure that we're dealing with a word, at least
+				if ( w ) {
+					// Show the loading spinner animation
+					//show( id("qloading") );
+					id("qloading").style.display = "inline-block";
+
+					// Make sure that no user is currently seleceted
+					//curPos = null;
+
+					// Get the <ul> that holds all the results
+					var results = id("results").lastChild;
+
+					// And empty it out
+					results.innerHTML = "";
+
+					//Do a request for new data
+					ajax({
+						// Do a simple GET request to the CGI script which
+						// returns an HTML block of <li> elements
+						type: "GET",
+						url: "auto_python.cgi?to=" + w,
+
+						// Watch for when the HTML comes back
+						onSuccess: function(html){
+							// Insert it in to the results UL
+							results.innerHTML = html;
+
+							// And hide the loading animation
+							hide( id("qloading") );
+
+							// Re-initalize the list of users that we've pulled in
+							loadDone(); 
+							//console.log("loadDone() called from ajax");
+
+							// Go through each of the returned users
+							var li = results.getElementsByTagName( "li" );
+							for ( var i=0; i < li.length; i++ ){
+
+								// If we have already added the user, remove the <li> for it
+								if ( doneUsers [ li[i].id ] )
+									results.removeChild ( li[i--] );
+
+								// Otherwise, bind some events to the user <li>
+								else{
+
+									// Whenever the user mouses over the li,
+									// set it to be the currently highlighted user
+									li[i].onmouseover = function(){
+										updatePos( this );
+
+										//JK-----
+										//Allows for kbd navigation to sync with mouse position
+										/*
+											1) Convert nodelist to array (allows for looping)
+											2) For each, find index of the one with class "cur"
+											3) Set it to curPos2
+										*/
+
+										//toddmotto.com/a-comprehensive-dive-into-nodelists-arrays-converting-nodelists-and-understanding-the-dom/
+										/*
+											var arr = [];
+											for (var i = 0; i < li.length; i++ ){
+												var self = li[i];
+												arr.push(self);
+											}
+										*/
+										var arr = Array.prototype.slice.call(li); //same as above, but succinct										
+										
+										//Find index of elem with class "cur" and set as curPos2
+										for(var i = 0; i < arr.length; i++){
+											//check if contains class of "cur"
+											if ( arr[i].className.indexOf("cur") > -1 )
+												curPos2 = i;											
+										}
+									};
+
+									// When the user is clicked
+									li[i].onclick = function(){
+										// Add the user to the input										
+										addUser( this );
+
+										// And focus back on the input again
+										//id("to").focus();
+									};
+								}
+							}
+
+							// Go through the list of user <li>
+							li = results.getElementsByTagName( "li" );
+
+							// If there are no users left (we've added them all)
+							if ( li.length == 0 )
+								// Then hide the results
+								hide( id("results") );
+
+							else {
+								// Add 'odd' classes to each of the remaining users
+								// to give them a striping
+								for ( var i = 1; i < li.length; i += 2 )
+									addClass( li[i], "odd" );
+
+								// Set the currently selected user to the first one
+								updatePos( li[0] );
+
+								// And then show the results
+								show( id("results") );
+							} 
+						}
+					});
+				}
+
+				//JK--- hide if someone decides to bail
+				if ( q = " ")
+					hide( id("results"));
+			},
+
+			// When the popup needs to be closed
+			close: function(){
+				//Hide the result set
+				hide( id("results") );
+			}
+		});
+
+	};//---is domReady really necessary??
+
+	// Trims 
+		function trim(s){
+			//spaces before and after
+			return s.replace(/^\s+/, "").replace(/\s+$/, "");
+		}
+
+	// Changes the highlight of the user that's currently selected
+		function updatePos( elem ){
+			// Update the position to the currently selected element
+			curPos = elem;
+
+			// Get all the user li elements
+			var li = id("results").getElementsByTagName("li");
+
+			// Remove the 'cur' class from the currently selected one
+			for ( var i = 0; i < li.length; i++ )
+				removeClass( li[i], "cur" );
+
+			// And add the highlight to the current user item
+			addClass( curPos, "cur" );
+
+			return false;
+		}
+
+	// Re-initializes the list of users that have already been
+	// entered into the text input by the user
+		function loadDone(){
+			doneUsers = {};
+
+			// Go through the list of users (seperated by commas)
+			var users = id("to").value.split(', ');
+			for ( var i = 0; i < users.length; i++ ){
+
+				// Save the username (as the key) in an object hash
+				doneUsers[ trim( users[i].toLowerCase() ) ] = true;  //wtf???------
+			}
+		}
+
+	// Adds a user to the input text field
+		function addUser( elem ){
+			// The text value of the text input
+			var v = id("to").value;
+
+			// Add the user's name at the end of the input
+			// Making sure that it's seperated with the correct comma
+			id("to").value = 
+				( v.indexOf(',') >= 0 ? v.substr(0, v.lastIndexOf(',') + 2 ) : '' ) //wtf???----
+				+ elem.id + ", ";
+
+			// Add the username to the master list (avoids having
+			// to completely re-load the list)
+			doneUsers[ elem.id ] = true;
+
+			//console.log(doneUsers);
+
+			// Remove the user li element
+			elem.parentNode.removeChild( elem );
+
+			// And hide the result list
+			hide( id("results") );
+		}
+
+	// A function for binding autocomplete searching abilities to a text input field
+		function delayedInput( opt ){
+
+			//console.log(opt);  //JK
+
+			// The amount of time to wait before looking for new user input
+			opt.time = opt.time || 400;
+
+			// The minimum number of characters to wait for, before firing a request
+			opt.chars = opt.chars != null ? opt.chars : 3;
+
+			// The callback to fire when the results popup should be opened,
+			// and possibly when a new request should be made
+			opt.open = opt.open || function(){};
+
+			// The callback to execute when the results popup should be closed
+			opt.close = opt.close || function(){};
+
+			// Should the focus of the field be taken into account, for
+			// opening/closing the results popup
+			opt.focus = opt.focus != null ? opt.focus : false;
+
+			// Remeber the original value that we're starting with
+			var old = opt.elem.value;
+
+			// And the current open/close state of the results popup
+			var open = false;
+
+			// Check to see if there's been a change in the input,
+			// at a given interval
+			setInterval( 
+				function(){
+					// The new input value
+					var newValue = opt.elem.value;
+
+					// The number of characters that have been entered
+					//var len = s.length;
+					var len = opt.elem.value.length;
+					//console.log( "I see that " + len + "char have been entered");
+
+					// Quickly check to see if the value has changed since the last
+					// time that we checked the input
+					if ( old != newValue ){
+
+						// If not enough characters have been entered, and the 'popup'
+						// is currently open
+						//if( v < opt.chars && open ){
+						if( len < opt.chars && open ){
+
+							// Close the display
+							opt.close();
+
+							// And remember that it's closed
+							open = false;					
+						}
+						// Otherwise, if the minimum number of characters have been entered
+						// as long as its more than one character
+						//else if ( v >= opt.chars && v > 0 ){
+						else if ( len >= opt.chars && len > 0 ){
+
+							//JK------hacky
+							toTop = true;
+							//console.log("--->LOOKATME<---" + toTop);
+
+							// Open the results popup with the current value
+							opt.open( newValue, open );
+
+							// Remember that the popup is currently open
+							open = true;
+						}
+						// Save the current value for later
+						old = newValue;
+					}
+				}, opt.time
+			);
+
+			// Watch for a key press
+			opt.elem.onkeyup = function(){
+				// If the keypress resulted in there being no more characters left,
+				// close the results popup
+
+				//console.log( "I was called on keyup");
+
+				if ( this.value.length == 0 ){
+					// Close the popup
+					opt.close();
+
+					// Remember that it's closed
+					open = false;
+				}
+			};
+
+			// If we're also checking for user focus (to handle opening/closing)
+			// the results popup
+			if ( opt.focus ){
+				// Watch for when the user moves away from the input
+				opt.elem.onblur = function(){
+
+					//console.log( "I was called on blur");
+
+					// If its currently open
+					if( open ){
+						// Close the popup
+						//opt.close();  //JK-----
+
+						// And remember that its closed
+						//open = false;
+					}
+				};
+			}
+
+			// Watch for when the user focuses back on the popup
+			opt.elem.onfocus = function(){
+
+				//console.log( "I was called on focus");
+
+				// If it has a value, and its currently closed
+				if( this.value.length != 0 && !open ){
+					// Re-open the popup - but with a blank value
+					// (this lets the 'open' function know not to re-retrive
+					// new results from the server, just re-open the popup)
+
+					//opt.open( '', open );   //JK-----
+
+					// And remember that the popup is open
+					//open = true;   //JK-----
+				}
+			}
+		}
+
+	//}); ////---is domReady really necessary??
+
+
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		@import url(http://fonts.googleapis.com/css?family=Londrina+Solid);
+
+		body, pre{
+			font-family: "Calibri";
+		}
+		a {
+			text-decoration: none;
+			color: #528B8B;
+		}
+		#container{
+			/*center of page*/
+			top: 10%;
+			left: 50%;
+			position: absolute;
+			margin-left: -200px;
+		}
+		#main{
+			font-family: "Londrina Solid";
+			/*font-weight: bold;*/
+			font-size: 25px;
+			margin-bottom: 40px;
+			/*display:none;*/
+			text-align: center;
+		}
+		#main:hover{
+			color: #528B8B
+		}
+		#btw{
+			font-size: 10px;
+		}
+		img{
+			height: 400px;
+		}
+		#citations{
+			display:none;
+		}
+		#citHead{
+			margin-top:10px;
+		}
+		#citHead:hover{
+			color: #528B8B;
+			cursor: pointer;
+		}
+		pre{
+			margin-top:0px;
+			margin-left:-100px;
+		}
+		#back{
+			margin-top: 10px;
+		}
+		#back a{
+			color: #000;
+		}
+		#back a:hover{
+			color: #528B8B;	
+		}
+	</style>
+</head>
+<body>
+	<div id="container">
+		<div id="main"> &#x25B8; Thanks for the message! &#x25C2; </div>
+		<img id="image" src="OB/OB1.gif"></img>
+		<div id="btw"> (*message not actually sent or stored) </div>
+		<div id="citHead">Sources &#x25BE; </div>
+		<div id="citations">		
+			<pre>
+				<strong>Images:</strong>
+					Batman gifs - <a href="http://sarahj-art.tumblr.com/tagged/OrdinaryBatman"> >> </a>
+					Loading cog gif - <a href="http://s1221.photobucket.com/user/Skulduggery1/media/cog_zps748ad958.gif.html"> >> </a> 
+					amon - <a href="http://fc09.deviantart.net/fs70/f/2012/236/c/c/chibi_amon_by_metapacoy-d5cavmi.png"> >> </a>
+					android18 - <a href="http://th07.deviantart.net/fs70/200H/i/2011/312/0/6/c_18_chibi_by_maffo1989-d4fiakm.png"> >> </a>
+					ayeka - <a href="http://www.animegalleries.net/img/11942"> >> </a>
+					gaara - <a href="http://fc05.deviantart.net/fs19/i/2007/226/3/5/Gaara_Shippuuden_by_Chibi_Kawaii.jpg"> >> </a>
+					goku - <a href="http://fc02.deviantart.net/fs71/i/2011/052/2/6/chibi_kid_goku___color_by_link_leob-d3a4608.png"> >> </a>
+					hiruma - <a href="http://fc02.deviantart.net/fs45/f/2009/124/f/f/Chibi_Hiruma_by_Daminitri.jpg"> >> </a>
+					naruto - <a href="http://th00.deviantart.net/fs70/PRE/f/2012/258/9/a/naruto_chibi_by_byhatakekakashi-d5esdwl.png"> >> </a>
+					rockLee - <a href="http://th02.deviantart.net/fs70/PRE/f/2013/156/0/a/rock_lee_sd_chibi_by_anjoicaros-d67yfed.png"> >> </a>
+					ryoko - <a href="http://www.reocities.com/sailor_eclipse2000/ryoko/r03.jpg"> >> </a>
+					sakura - <a href="http://i419.photobucket.com/albums/pp275/rubiks-cube/xSakuraPics/Sakura-Chibi.jpg"> >> </a>
+					sasuke -  >>
+					vegeta - <a href="http://th08.deviantart.net/fs71/PRE/i/2011/307/a/b/vegeta_ss_chibi_by_maffo1989-d4exilp.png"> >> </a>
+				<strong>Code:</strong>
+					John Resig - <a href="http://www.amazon.com/Pro-JavaScript-Techniques-John-Resig/dp/1590597273">Pro JavaScript Techniques</a>
+					Andrew Harrington - <a href="http://anh.cs.luc.edu/python/hands-on/3.1/handsonHtml/dynamic.html">local CGI server</a>
+					Stackoverflow
+			</pre>
+		</div>
+		<div id="back"><a href="autocomplete.html">&#x25C2; Back</a></div>
+	</div>
+
+
+	<script>
+		//pick a random batman image
+		var rand = ( Math.floor ( Math.random() * 100 ) % 4 ) + 1;
+		var x = document.getElementById("image");
+		x.src = "OB/OB" + rand + ".gif";
+
+		window.onload = function(){
+			//show citations on click
+			var y = document.getElementById("citHead");
+			var z = document.getElementById("citations");
+			//y.addEventListener("click", function(){ toggleDisplay(z); }, false);
+			y.onclick = function() { toggleDisplay(z); } 
+
+			function toggleDisplay(elem){
+				var curDisp = elem.style.display;
+
+				if( curDisp == "none" || curDisp == "" ){
+					elem.style.display = "block";
+					//hacky
+					y.innerHTML = "Sources &#x25B4;";
+				}
+				else if (curDisp == "block" ){
+					elem.style.display = "none";
+					//hacky
+					y.innerHTML = "Sources &#x25BE;";
+				}
+			}
+		}
+
+	</script>
+</body>
+
+</html>
+
