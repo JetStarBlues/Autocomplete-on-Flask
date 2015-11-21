@@ -97,17 +97,7 @@
 		//pick a random batman image
 		var rand = ( Math.floor ( Math.random() * 100 ) % 4 ) + 1;
 		var x = document.getElementById("image");
-		x.src = {{ url_for('static', filename='') }} + "OB/OB" + rand + ".gif";
-
-
-		var testO = {{ url_for('static', filename='') }};
-		console.log( typeof(testO) );
-		console.log( Object.keys(testO) );
-		var testOVals = [];
-		for (var key in testO)
-			testOVals.push(testO[key]);
-		console.log( testOVals );
-
+		x.src = "{{ url_for('static', filename='') }}" + "OB/OB" + rand + ".gif";
 
 		window.onload = function(){
 			//show citations on click
