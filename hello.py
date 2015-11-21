@@ -18,6 +18,9 @@ def findUsers():
 		print("why heloo there")
 		query = request.args.get("to")
 		print("keyword received was ", query)
+		print( query )
+		print( type(query) )
+		print("qstring was ", request.query_string)
 
 
 @app.route('/thanks.html')
