@@ -189,7 +189,7 @@
 
 		// Create the loading image
 			var img = document.createElement("img");
-			img.src = "cog.gif";
+			img.src = "{{ url_for('static', filename='cog.gif') }}";
 			img.id = "qloading";
 			img.style.display = "none"; //make sure hidden on window load
 
